@@ -125,24 +125,31 @@ def visualize_feature_maps(model, preprocessed_image, max_filters=8):
     Shows the distinct spatial features (edges, contours, gradients) captured by learned filters.
     """
     first_conv_layer = None
+    input_tensor = None
     for layer in model.layers:
         if isinstance(layer, tf.keras.layers.Conv2D):
             first_conv_layer = layer
+            input_tensor = model.inputs
             break
         elif hasattr(layer, "layers"):
             for sub_layer in layer.layers:
                 if isinstance(sub_layer, tf.keras.layers.Conv2D):
                     first_conv_layer = sub_layer
+                    input_tensor = layer.inputs
                     break
             if first_conv_layer:
                 break
 
-    if first_conv_layer is None:
+    if first_conv_layer is None or input_tensor is None:
         st.info("No Conv2D layer found in the chosen model for feature map visualization.")
         return
 
-    activation_model = tf.keras.Model(inputs=model.input, outputs=first_conv_layer.output)
-    feature_maps = activation_model.predict(preprocessed_image, verbose=0)
+    try:
+        activation_model = tf.keras.Model(inputs=input_tensor, outputs=first_conv_layer.output)
+        feature_maps = activation_model.predict(preprocessed_image, verbose=0)
+    except Exception as e:
+        st.warning(f"Could not extract feature maps: {e}")
+        return
 
     num_filters = min(max_filters, feature_maps.shape[-1])
     cols = 4

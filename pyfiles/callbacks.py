@@ -48,7 +48,7 @@ class StreamlitCallback(Callback):
         # Real-time Loss Chart
         loss_fig = go.Figure()
         loss_fig.add_trace(go.Scatter(x=epochs, y=self.history['loss'], mode='lines+markers', name='Train Loss', line=dict(color='#2ca02c')))
-        if any(self.history['val_loss']):
+        if len(self.history['val_loss']) > 0:
             loss_fig.add_trace(go.Scatter(x=epochs, y=self.history['val_loss'], mode='lines+markers', name='Val Loss', line=dict(color='#d62728')))
         loss_fig.update_layout(title='Live Training Loss', xaxis_title='Epoch', yaxis_title='Loss', height=320)
         self.loss_chart.plotly_chart(loss_fig, use_container_width=True)
@@ -56,7 +56,7 @@ class StreamlitCallback(Callback):
         # Real-time Accuracy Chart
         acc_fig = go.Figure()
         acc_fig.add_trace(go.Scatter(x=epochs, y=self.history['accuracy'], mode='lines+markers', name='Train Accuracy', line=dict(color='#1f77b4')))
-        if any(self.history['val_accuracy']):
+        if len(self.history['val_accuracy']) > 0:
             acc_fig.add_trace(go.Scatter(x=epochs, y=self.history['val_accuracy'], mode='lines+markers', name='Val Accuracy', line=dict(color='#ff7f0e')))
         acc_fig.update_layout(title='Live Training Accuracy', xaxis_title='Epoch', yaxis_title='Accuracy', height=320)
         self.accuracy_chart.plotly_chart(acc_fig, use_container_width=True)
