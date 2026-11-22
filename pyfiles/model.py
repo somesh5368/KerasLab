@@ -1,57 +1,86 @@
 # File: model.py
-# Purpose: Define and compile the Convolutional Neural Network model
+# Purpose: Define and compile models: Custom CNN, VGG16, and ResNet50
 
-# META DATA - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Developer details:
-#   Name         : Lay Sheth and Rishav Raj
-#   Role         : Software Engineers
-#   Version      : V 1.0
-#   Unit test    : Pass
-#   Integration test: Pass
-#   Description  : This script defines and compiles the Convolutional Neural Network model.
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
+from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten, GlobalAveragePooling2D, Input
 from tensorflow.keras.optimizers import Adam
 from pyfiles.constants import IMG_SIZE
 
-def create_model(learning_rate):
+def create_model(model_name="Custom CNN", learning_rate=0.001, dropout_rate=0.5, img_size=IMG_SIZE):
     """
-    Create and compile a Convolutional Neural Network model.
+    Create and compile a model based on chosen architecture.
 
-    Args:
-        learning_rate (float): Learning rate for the optimizer.
-
-    Returns:
-        keras.models.Sequential: Compiled CNN model.
+    Options:
+      - "Custom CNN" (Deep Multi-layer Convolutional Network)
+      - "VGG16 (Transfer Learning)" (Pre-trained ImageNet deep feature extractor)
+      - "ResNet50 (Transfer Learning)" (Pre-trained ImageNet residual network with skip connections)
     """
-    model = Sequential([
-        Conv2D(64, (3,3), activation='relu', input_shape=(IMG_SIZE, IMG_SIZE, 1), padding='same'),
-        MaxPooling2D(pool_size=(2,2)),
-        Conv2D(128, (3,3), activation='relu', padding='same'),
-        MaxPooling2D(pool_size=(2,2)),
-        Conv2D(256, (3,3), activation='relu', padding='same'),
-        MaxPooling2D(pool_size=(2,2)),
-        Flatten(),
-        Dense(128, activation='relu'),
-        Dropout(0.5),
-        Dense(64, activation='relu'),
-        Dense(1, activation='sigmoid')
-    ])
+    if model_name == "VGG16 (Transfer Learning)":
+        from tensorflow.keras.applications import VGG16
+        base_model = VGG16(
+            weights="imagenet",
+            include_top=False,
+            input_shape=(img_size, img_size, 3)
+        )
+        base_model.trainable = False  # Freeze pretrained convolutional base
 
-    model.compile(optimizer=Adam(learning_rate=learning_rate),
-                  loss='binary_crossentropy',
-                  metrics=['accuracy'])
+        model = Sequential([
+            Input(shape=(img_size, img_size, 3)),
+            base_model,
+            GlobalAveragePooling2D(),
+            Dense(128, activation="relu"),
+            Dropout(dropout_rate),
+            Dense(1, activation="sigmoid")
+        ], name="VGG16_TransferLearning")
+
+    elif model_name == "ResNet50 (Transfer Learning)":
+        from tensorflow.keras.applications import ResNet50
+        base_model = ResNet50(
+            weights="imagenet",
+            include_top=False,
+            input_shape=(img_size, img_size, 3)
+        )
+        base_model.trainable = False  # Freeze pretrained convolutional base
+
+        model = Sequential([
+            Input(shape=(img_size, img_size, 3)),
+            base_model,
+            GlobalAveragePooling2D(),
+            Dense(128, activation="relu"),
+            Dropout(dropout_rate),
+            Dense(1, activation="sigmoid")
+        ], name="ResNet50_TransferLearning")
+
+    else:
+        # Custom Convolutional Neural Network
+        model = Sequential([
+            Input(shape=(img_size, img_size, 3)),
+            # Block 1
+            Conv2D(32, (3, 3), activation="relu", padding="same"),
+            MaxPooling2D(pool_size=(2, 2)),
+
+            # Block 2
+            Conv2D(64, (3, 3), activation="relu", padding="same"),
+            MaxPooling2D(pool_size=(2, 2)),
+
+            # Block 3
+            Conv2D(128, (3, 3), activation="relu", padding="same"),
+            MaxPooling2D(pool_size=(2, 2)),
+
+            # Fully Connected Classification Head
+            Flatten(),
+            Dense(128, activation="relu"),
+            Dropout(dropout_rate),
+            Dense(64, activation="relu"),
+            Dropout(dropout_rate / 2 if dropout_rate > 0 else 0),
+            Dense(1, activation="sigmoid")
+        ], name="Custom_CNN")
+
+    model.compile(
+        optimizer=Adam(learning_rate=learning_rate),
+        loss="binary_crossentropy",
+        metrics=["accuracy"]
+    )
 
     return model
-
-# --------------------------------------------------------------------------------------
-# End of Script
-# --------------------------------------------------------------------------------------
-
-# SUMMARY:
-# This script defines and compiles the Convolutional Neural Network model.
-#
-# USERS:
-# Users can call the `create_model` function to create and compile the CNN model with a specified learning rate.

@@ -1,92 +1,139 @@
-# Keras & Streamlit Lab
+# ⚡ NeuralVision Studio | KerasLab
 
-This project is a deep learning application that classifies images of cats and dogs using a Convolutional Neural Network (CNN) built with TensorFlow and Keras. The application features a Streamlit-based user interface for training the model, visualizing the training process, and making predictions.
+An end-to-end, high-performance Deep Learning Computer Vision studio and image classification workbench built with **TensorFlow / Keras**, **OpenCV**, **Plotly**, and **Streamlit**.
 
----
-To Learn more about the project, click [Here](LearnWithPrompts.md)
-
-
-## Table of Contents
-
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Code Structure](#code-structure)
-- [Model Architecture](#model-architecture)
-- [License](#license)
-
-## Features
-
-- User-friendly Streamlit interface for model training and prediction
-- Customizable training parameters (learning rate, epochs, batch size)
-- Real-time training progress visualization
-- Interactive charts for loss and accuracy metrics
-- Image prediction functionality
-
-## Installation
-
-1. Clone the repository:
-   ```
-   git clone https://github.com/cloaky233/KerasLab.git
-   cd KerasLab
-   ```
-
-2. Install `uv` for dependency management:
-   ```
-   pip install uv
-   ```
-
-3. Create a virtual environment and activate it:
-   ```
-   uv venv
-   .venv/scripts/activate  # On Windows
-   source .venv/bin/activate  # On Unix or MacOS
-   ```
-
-4. Install the required packages:
-   ```
-   uv pip install -r requirements.txt
-   ```
-
-## Usage
-
-1. Prepare your dataset:
-   - Place your training images in `dataset/training_set/training_set`
-   - Place your testing images in `dataset/test_set/test_set`
-   - Ensure each set has subdirectories for `cats` and `dogs`
-
-2. Run the Streamlit app:
-   ```
-   streamlit run app.py
-   ```
-
-3. Use the Streamlit interface to:
-   - Set data paths
-   - Configure training parameters
-   - Start the training process
-   - Visualize training progress and results
-   - Make predictions on new images
-
-## Code Structure
-
-The main script `app.py` is organized into several sections:
-(now kept in pyfiles directory)
-
-1. **Imports and Constants**: Required libraries and global variables.
-2. **Data Loading and Preprocessing**: Functions to load and prepare image data.
-3. **Model Creation**: Definition of the CNN architecture.
-4. **Visualization Functions**: Methods for plotting training history and predictions.
-5. **StreamlitCallback**: Custom Keras callback for updating the Streamlit UI during training.
-6. **Main Function**: Streamlit UI setup and main execution flow.
-
-## Model Architecture
-
-For detailed information about the model architecture, please refer to the [ModelArchitecture.md](ModelArchitecture.md) file.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+Designed and maintained by **Somesh Pandey** ([spandey5368@gmail.com](mailto:spandey5368@gmail.com)).
 
 ---
 
-Feel free to contribute to this project by submitting issues or pull requests. For any questions or support, please open an issue in the GitHub repository.
+## 🌟 Key Highlights & Capabilities
+
+- **Multi-Architecture Neural Suite**:
+  - **Custom CNN**: 3-block hierarchical convolutional network ($32 \rightarrow 64 \rightarrow 128$ filters, $3\times3$ kernels, ReLU, MaxPooling2D).
+  - **VGG16 (Transfer Learning)**: Deep 16-layer feature representation pre-trained on ImageNet with frozen feature extraction and `GlobalAveragePooling2D`.
+  - **ResNet50 (Transfer Learning)**: 50-layer deep Residual Network with identity skip connections that overcome vanishing gradients.
+- **Adaptive Regularization & Overfitting Defense**:
+  - Configurable **Dropout** ($p \in [0.0, 0.7]$) preventing neuron co-adaptation.
+  - **Early Stopping** callback monitoring validation loss with configurable patience and automatic restoration of the best model weights.
+- **Real-Time Live Telemetry (`StreamlitCallback`)**:
+  - Live progress tracking with asynchronous Plotly loss and accuracy curves updated at the end of every epoch.
+- **Diagnostic Evaluation & Confusion Matrix**:
+  - Interactive Confusion Matrix Heatmap.
+  - Quantitative diagnostics: Overall Accuracy, Precision, Recall (Sensitivity), and F1-Score.
+- **Explainable AI (XAI) & Feature Map Visualizer**:
+  - Peeks inside the neural network's receptive fields by rendering the activations of the first convolutional layer (`Conv2D`), showing detected edges, gradients, and textures in real-time.
+- **Zero-Setup Procedural Dataset Synthesizer**:
+  - Built-in geometric demo generator using OpenCV for cats and dogs with randomized noise. Runs out-of-the-box without needing to download external multi-gigabyte datasets!
+
+---
+
+## 📁 Repository Structure
+
+```
+KerasLab/
+├── app.py                      # Main Streamlit web application & UI dashboard
+├── pyfiles/
+│   ├── constants.py            # Global hyperparameter constants, image dimensions & class maps
+│   ├── preprocessing.py        # Image decoding, tensor normalization, and color conversion
+│   ├── model.py                # Model builders: Custom CNN, VGG16, and ResNet50
+│   ├── data_loader.py          # Dataset ingestion, validation checks, and synthetic data generator
+│   ├── callbacks.py            # Custom Keras callback for real-time Streamlit & Plotly updates
+│   └── visualization.py        # Interactive loss/acc curves, Confusion Matrix, and Conv2D feature maps
+├── dataset/                    # Local training & validation image sets
+│   ├── training_set/
+│   │   ├── cats/
+│   │   └── dogs/
+│   └── test_set/
+│       ├── cats/
+│       └── dogs/
+├── images/                     # Built-in sample benchmark images for inference testing
+├── requirements.txt            # Python dependencies (TensorFlow, Streamlit, OpenCV, Plotly, etc.)
+├── ModelArchitecture.md        # Comprehensive technical guide to neural layer designs
+├── LearnWithPrompts.md         # Educational prompt-based learning guide
+└── README.md                   # Project documentation
+```
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+Ensure you have Python 3.10 or higher installed.
+
+### 2. Virtual Environment Setup
+
+Using standard `venv`:
+```bash
+python -m venv .venv
+# On Windows:
+.venv\Scripts\activate
+# On macOS / Linux:
+source .venv/bin/activate
+```
+
+Or using `uv` for ultra-fast package management:
+```bash
+pip install uv
+uv venv
+.venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+# or with uv:
+uv pip install -r requirements.txt
+```
+
+### 4. Run the Application
+```bash
+streamlit run app.py
+```
+The application will launch in your default web browser at `http://localhost:8501`.
+
+---
+
+## 🖥️ UI Workflow & Application Tabs
+
+1. **🚀 Model Training & Analytics**:
+   - Configure data directories and inspect model specifications.
+   - Click **Train Model** to run training with live epoch updates and real-time loss/accuracy charts.
+   - Automatically computes and displays the Confusion Matrix Heatmap, Accuracy, Precision, Recall, and F1-Score on test data upon completion.
+   - Automatically serializes trained model weights to `dogcatclassifier.keras` and `dogcatclassifier.h5`.
+
+2. **🔍 Real-Time Inference & Upload**:
+   - Upload any image (`.jpg`, `.png`, `.jpeg`) from your computer or pick from built-in sample images (`images/cat1.jpg`, `images/dog1.jpg`).
+   - Click **Run Inference** to classify the image as Cat or Dog with exact percentage confidence.
+   - View the horizontal probability bar and inspect the **Conv2D Feature Map Activations** showing what low-level visual patterns the filters extracted.
+
+3. **📈 Regularization Dynamics**:
+   - Interactive comparative charts contrasting unregularized overfitting models against regularized networks using Dropout and Early Stopping.
+
+4. **🧠 Architecture Deep Dive**:
+   - Mathematical and theoretical breakdowns of Convolutions, Max Pooling, ReLU activations, Residual Skip Connections, and Binary Cross-Entropy loss.
+
+---
+
+## ⚙️ Connecting to Your Personal GitHub Repository
+
+If you cloned this repository and want to push it to your personal GitHub account:
+
+```bash
+# 1. Check your current git remote
+git remote -v
+
+# 2. Update remote URL to your personal GitHub repository:
+git remote set-url origin https://github.com/spandey5368/KerasLab.git
+
+# 3. Stage, commit, and push your changes:
+git add .
+git commit -m "Personalize and upgrade NeuralVision Studio with modern multi-architecture pipeline"
+git push -u origin main
+```
+
+---
+
+## 📜 License & Credits
+
+- Developed and maintained by **Somesh Pandey**.
+- Licensed under the **MIT License**.
