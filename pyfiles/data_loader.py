@@ -73,6 +73,13 @@ def generate_demo_dataset(base_dir="dataset", num_train=30, num_test=10, size=IM
     cv2.imwrite(os.path.join(images_dir, "dog1.jpg"), draw_animal("dog", 999))
 
 
+def _is_dir_empty(path):
+    try:
+        with os.scandir(path) as it:
+            return next(it, None) is None
+    except Exception:
+        return True
+
 def check_dataset_status(train_path, test_path):
     """Check if training and testing folders exist and have images."""
     for p in [train_path, test_path]:
@@ -82,7 +89,7 @@ def check_dataset_status(train_path, test_path):
         dogs_p = os.path.join(p, "dogs")
         if not (os.path.exists(cats_p) and os.path.exists(dogs_p)):
             return False, f"Subdirectories 'cats' and 'dogs' not found inside '{p}'."
-        if len(os.listdir(cats_p)) == 0 or len(os.listdir(dogs_p)) == 0:
+        if _is_dir_empty(cats_p) or _is_dir_empty(dogs_p):
             return False, f"Folders inside '{p}' are empty."
     return True, "Dataset ready"
 

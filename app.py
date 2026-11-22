@@ -70,7 +70,9 @@ def ensure_initial_setup():
     if not status_ok:
         generate_demo_dataset()
 
-ensure_initial_setup()
+if "setup_done" not in st.session_state:
+    ensure_initial_setup()
+    st.session_state["setup_done"] = True
 
 # App Header
 st.markdown('<div class="main-header">⚡ NeuralVision Studio: Deep Learning Lab</div>', unsafe_allow_html=True)
@@ -296,7 +298,10 @@ with tab2:
         if target_input:
             try:
                 display_img = load_display_image(target_input)
-                st.image(display_img, caption="Input Tensor (RGB)", use_container_width=True)
+                try:
+                    st.image(display_img, caption="Input Tensor (RGB)", use_column_width=True)
+                except TypeError:
+                    st.image(display_img, caption="Input Tensor (RGB)", use_container_width=True)
             except Exception as exc:
                 st.error(f"Image load error: {exc}")
                 target_input = None
