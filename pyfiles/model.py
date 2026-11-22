@@ -17,7 +17,7 @@ def create_model(model_name="Custom CNN", learning_rate=0.001, dropout_rate=0.5,
       - "ResNet50 (Transfer Learning)" (Pre-trained ImageNet residual network with skip connections)
     """
     if model_name == "VGG16 (Transfer Learning)":
-        from tensorflow.keras.applications import VGG16
+        from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
         base_model = VGG16(
             weights="imagenet",
             include_top=False,
@@ -27,6 +27,8 @@ def create_model(model_name="Custom CNN", learning_rate=0.001, dropout_rate=0.5,
 
         model = Sequential([
             Input(shape=(img_size, img_size, 3)),
+            tf.keras.layers.Rescaling(255.0),
+            tf.keras.layers.Lambda(preprocess_input),
             base_model,
             GlobalAveragePooling2D(),
             Dense(128, activation="relu"),
@@ -35,7 +37,7 @@ def create_model(model_name="Custom CNN", learning_rate=0.001, dropout_rate=0.5,
         ], name="VGG16_TransferLearning")
 
     elif model_name == "ResNet50 (Transfer Learning)":
-        from tensorflow.keras.applications import ResNet50
+        from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
         base_model = ResNet50(
             weights="imagenet",
             include_top=False,
@@ -45,6 +47,8 @@ def create_model(model_name="Custom CNN", learning_rate=0.001, dropout_rate=0.5,
 
         model = Sequential([
             Input(shape=(img_size, img_size, 3)),
+            tf.keras.layers.Rescaling(255.0),
+            tf.keras.layers.Lambda(preprocess_input),
             base_model,
             GlobalAveragePooling2D(),
             Dense(128, activation="relu"),
