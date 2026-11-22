@@ -123,7 +123,7 @@ If you cloned this repository and want to push it to your personal GitHub accoun
 git remote -v
 
 # 2. Update remote URL to your personal GitHub repository:
-git remote set-url origin https://github.com/spandey5368/KerasLab.git
+git remote set-url origin https://github.com/somesh5368/KerasLab.git
 
 # 3. Stage, commit, and push your changes:
 git add .
