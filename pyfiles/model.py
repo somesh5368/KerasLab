@@ -3,7 +3,11 @@
 
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten, GlobalAveragePooling2D, Input
+from tensorflow.keras.layers import (
+    Dense, Conv2D, MaxPooling2D, Dropout, Flatten,
+    GlobalAveragePooling2D, Input, BatchNormalization,
+    RandomFlip, RandomRotation, RandomZoom
+)
 from tensorflow.keras.optimizers import Adam
 from pyfiles.constants import IMG_SIZE
 
@@ -57,27 +61,44 @@ def create_model(model_name="Custom CNN", learning_rate=0.001, dropout_rate=0.5,
         ], name="ResNet50_TransferLearning")
 
     else:
-        # Custom Convolutional Neural Network
+        # High-Performance Modern Custom Convolutional Neural Network
         model = Sequential([
             Input(shape=(img_size, img_size, 3)),
-            # Block 1
+
+            # 1. On-the-fly Data Augmentation (active during training only)
+            RandomFlip("horizontal"),
+            RandomRotation(0.1),
+            RandomZoom(0.1),
+
+            # 2. Block 1 (32 filters)
             Conv2D(32, (3, 3), activation="relu", padding="same"),
+            BatchNormalization(),
+            Conv2D(32, (3, 3), activation="relu", padding="same"),
+            BatchNormalization(),
             MaxPooling2D(pool_size=(2, 2)),
+            Dropout(0.2),
 
-            # Block 2
+            # 3. Block 2 (64 filters)
             Conv2D(64, (3, 3), activation="relu", padding="same"),
+            BatchNormalization(),
+            Conv2D(64, (3, 3), activation="relu", padding="same"),
+            BatchNormalization(),
             MaxPooling2D(pool_size=(2, 2)),
+            Dropout(0.25),
 
-            # Block 3
+            # 4. Block 3 (128 filters)
             Conv2D(128, (3, 3), activation="relu", padding="same"),
+            BatchNormalization(),
+            Conv2D(128, (3, 3), activation="relu", padding="same"),
+            BatchNormalization(),
             MaxPooling2D(pool_size=(2, 2)),
+            Dropout(0.3),
 
-            # Fully Connected Classification Head
+            # 5. Fully Connected Classification Head
             Flatten(),
             Dense(128, activation="relu"),
+            BatchNormalization(),
             Dropout(dropout_rate),
-            Dense(64, activation="relu"),
-            Dropout(dropout_rate / 2 if dropout_rate > 0 else 0),
             Dense(1, activation="sigmoid")
         ], name="Custom_CNN")
 

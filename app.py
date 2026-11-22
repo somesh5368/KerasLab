@@ -169,10 +169,11 @@ with tab1:
         st.subheader("Selected Model Specifications")
         if model_choice == "Custom CNN":
             st.info(
-                "**Custom Convolutional Neural Network**:\n"
-                "- 3 Hierarchical Convolutional Blocks (`Conv2D`: 32 -> 64 -> 128 filters, 3x3 kernels, ReLU)\n"
-                "- 3 `MaxPooling2D` (2x2) spatial downsampling layers\n"
-                f"- Classification Head: Flatten -> Dense(128) -> Dropout({dropout_rate}) -> Dense(64) -> Sigmoid"
+                "**Upgraded Deep CNN with Data Augmentation & Batch Normalization**:\n"
+                "- Active Data Augmentation: `RandomFlip`, `RandomRotation(10%)`, `RandomZoom(10%)`\n"
+                "- 3 Dual-Convolutional Blocks with `BatchNormalization` (32 -> 64 -> 128 filters)\n"
+                "- 3 `MaxPooling2D` spatial downsampling layers with progressive Dropout\n"
+                f"- Classification Head: Flatten -> Dense(128) -> BatchNorm -> Dropout({dropout_rate}) -> Sigmoid"
             )
         elif model_choice == "VGG16 (Transfer Learning)":
             st.info(
