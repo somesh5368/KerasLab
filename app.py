@@ -20,7 +20,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 
 from pyfiles.constants import IMG_SIZE, CLASSES
 from pyfiles.data_loader import load_data, check_dataset_status, generate_demo_dataset
-from pyfiles.model import create_model
+from pyfiles.model import create_model, load_saved_model
 from pyfiles.preprocessing import preprocess_image, load_display_image
 from pyfiles.visualization import (
     plot_training_history,
@@ -315,9 +315,9 @@ with tab2:
             if "trained_model" in st.session_state:
                 model = st.session_state["trained_model"]
             elif os.path.exists("dogcatclassifier.keras"):
-                model = tf.keras.models.load_model("dogcatclassifier.keras")
+                model = load_saved_model("dogcatclassifier.keras")
             elif os.path.exists("dogcatclassifier.h5"):
-                model = tf.keras.models.load_model("dogcatclassifier.h5")
+                model = load_saved_model("dogcatclassifier.h5")
             else:
                 model = create_model("Custom CNN", img_size=IMG_SIZE)
 

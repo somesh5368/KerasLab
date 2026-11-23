@@ -11,6 +11,33 @@ from tensorflow.keras.layers import (
 from tensorflow.keras.optimizers import Adam
 from pyfiles.constants import IMG_SIZE
 
+@tf.keras.utils.register_keras_serializable()
+def vgg_preprocess(x):
+    from tensorflow.keras.applications.vgg16 import preprocess_input
+    return preprocess_input(x)
+
+@tf.keras.utils.register_keras_serializable()
+def resnet_preprocess(x):
+    from tensorflow.keras.applications.resnet50 import preprocess_input
+    return preprocess_input(x)
+
+def load_saved_model(filepath):
+    """
+    Safely load a trained model with custom preprocessing objects.
+    """
+    from tensorflow.keras.applications.resnet50 import preprocess_input as resnet_prep
+    from tensorflow.keras.applications.vgg16 import preprocess_input as vgg_prep
+
+    custom_objects = {
+        'preprocess_input': resnet_prep,
+        'resnet_preprocess': resnet_preprocess,
+        'vgg_preprocess': vgg_preprocess,
+    }
+    try:
+        return tf.keras.models.load_model(filepath, custom_objects=custom_objects, safe_mode=False)
+    except Exception:
+        return tf.keras.models.load_model(filepath, safe_mode=False)
+
 def create_model(model_name="Custom CNN", learning_rate=0.001, dropout_rate=0.5, img_size=IMG_SIZE):
     """
     Create and compile a model based on chosen architecture.
@@ -32,7 +59,7 @@ def create_model(model_name="Custom CNN", learning_rate=0.001, dropout_rate=0.5,
         model = Sequential([
             Input(shape=(img_size, img_size, 3)),
             tf.keras.layers.Rescaling(255.0),
-            tf.keras.layers.Lambda(preprocess_input),
+            tf.keras.layers.Lambda(vgg_preprocess),
             base_model,
             GlobalAveragePooling2D(),
             Dense(128, activation="relu"),
@@ -52,7 +79,7 @@ def create_model(model_name="Custom CNN", learning_rate=0.001, dropout_rate=0.5,
         model = Sequential([
             Input(shape=(img_size, img_size, 3)),
             tf.keras.layers.Rescaling(255.0),
-            tf.keras.layers.Lambda(preprocess_input),
+            tf.keras.layers.Lambda(resnet_preprocess),
             base_model,
             GlobalAveragePooling2D(),
             Dense(128, activation="relu"),
